@@ -236,7 +236,6 @@ ITERATION=0
 WITHIN_ACTIVE=false
 while IFS= read -r line || [[ -n "$line" ]]; do
   ((LINE_NUM+=1))
-  [[ "$VERBOSE" == "true" ]] && echo "Line $LINE_NUM" >&2
   [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM $target\r"
 
   new_line="$line"
@@ -257,7 +256,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
       fi
     fi
   else
-    WITHIN_ACTIVE=false
+    WITHIN_ACTIVE=true
   fi
 
   if [[ "$WITHIN_ACTIVE" == "true" ]]; then
