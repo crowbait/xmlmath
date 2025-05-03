@@ -1,3 +1,4 @@
+<!-- REMOVE THIS LINE. This file serves to be copied into test-specific expected outputs. REMOVE THIS LINE. -->
 <content>
   <type attr1="1" attr2="2"><val1>10</val1>
     <val2>20</val2>
