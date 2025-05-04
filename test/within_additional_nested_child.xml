@@ -1,15 +1,15 @@
-<?xml version="1.0"?>
 <content>
   <singletarget singleattr="1">
     <singleval>10</singleval>
   </singletarget>
-  <type attr1="1" attr2="2"><val1>10</val1>
+  <type attr1="1" attr2="2">
+    <val1>10</val1>
     <val2>20</val2>
   </type>
-  <notype attr1="1"
-    attr2="2">
+  <notype attr1="1" attr2="2">
     <val1>10</val1>
-    <med><val1>10</val1>
+    <med>
+      <val1>10</val1>
     </med>
     <val2>20</val2>
   </notype>
@@ -17,14 +17,9 @@
     <val1>10</val1>
     <val2>20</val2>
     <med name="namedsub">
-      <val1>10</val1>
+      <val1>100</val1>
     </med>
   </notype>
-  <type attr1="1" attr2="2" attr3="3" attr4="4"
-    attr5="5"
-    attr6="6" 
-    />
-  <notype attr1="1" attr2="2" attr3="3" attr4="4"
-    attr5="5"
-    attr6="6" />
+  <type attr1="1" attr2="2" attr3="3" attr4="4" attr5="5" attr6="6" />
+  <notype attr1="1" attr2="2" attr3="3" attr4="4" attr5="5" attr6="6" />
 </content>

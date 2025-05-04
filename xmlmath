@@ -3,7 +3,7 @@ set -e
 
 print_help () {
   echo "XMLMath v1.0.0"
-  echo "c Crowbait | MIT License"
+  echo "c Crowbait | Licensed under GPLv3"
   echo ""
   echo "Usage: $0 <target-mode> <operation-mode> [<modifier>] [options] <targets...>"
   echo ""
@@ -12,10 +12,10 @@ print_help () {
   echo "  value       Modify XML element values: <tag>2</tag>"
   echo ""
   echo "Operation Modes:"
-  echo "  --add      | a   Add modifier"
-  echo "  --subtract | s   Subtract modifier"
-  echo "  --multiply | m   Multiply by modifier"
-  echo "  --divide   | d   Divide by modifier"
+  echo "  add       | a     Add modifier"
+  echo "  subtract  | s     Subtract modifier"
+  echo "  multiply  | m     Multiply by modifier"
+  echo "  divide    | d     Divide by modifier"
   echo ""
   echo "Options:"
   echo "  --file <file>  | -f <file>  Input file (optional, stdin if not specified, stdout is file path)"
@@ -31,7 +31,7 @@ print_help () {
   echo "                                This is an addon to -w and specifies that the opening tag line must match an additional regex."
   echo "                                -w 'type' --wr 'attr.=\"1\"' will match all \"type\" tags that also have some attribute called \"attr\" set to 1."
   echo "  --verbose      | -v         Print detailed information about what's being done"
-  echo "  --progress                  Prints progress updates (default false, can't be used with -v)"
+  echo "  --progress                  Print progress updates (default false, can't be used with -v)"
   echo "  help                        Show this help message"
   echo ""
   echo "Examples:"
@@ -172,7 +172,7 @@ if [[ -n "$FILE" ]]; then
 else
   INPUT_STREAM="/dev/stdin"
 fi
-# format before processing to protect fragile regex and line-based processing
+# Format before processing to protect fragile regex and line-based processing
 TMP_XML=$(mktemp)
 xmllint --format "$INPUT_STREAM" > "$TMP_XML"
 INPUT_STREAM="$TMP_XML"
@@ -225,9 +225,14 @@ apply_math() {
 TOTAL_LINES=$(wc -l < "$TMP_XML")
 TOTAL_TARGETS="${#TARGETS[@]}"
 TOTAL_ITERATIONS=$(awk "BEGIN { print $TOTAL_LINES * $TOTAL_TARGETS }")
-[[ "$VERBOSE" == "true" ]] && echo "$TOTAL_LINES total lines" >&2
-[[ "$VERBOSE" == "true" ]] && echo "$TOTAL_TARGETS total targets" >&2
-[[ "$VERBOSE" == "true" ]] && echo "$TOTAL_ITERATIONS total iterations" >&2
+if [[ "$VERBOSE" == "true" ]]; then
+  for target in "${TARGETS[@]}"; do
+    echo "Target specified: ${target}"
+    echo "$TOTAL_LINES total lines" >&2
+    echo "$TOTAL_TARGETS total targets" >&2
+    echo "$TOTAL_ITERATIONS total iterations" >&2
+  done
+fi
 
 TMP_FILE="$(mktemp)"
 

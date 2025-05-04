@@ -1,0 +1,25 @@
+<content>
+  <singletarget singleattr="1">
+    <singleval>10</singleval>
+  </singletarget>
+  <type attr1="1" attr2="2">
+    <val1>11</val1>
+    <val2>21</val2>
+  </type>
+  <notype attr1="1" attr2="2">
+    <val1>11</val1>
+    <med>
+      <val1>11</val1>
+    </med>
+    <val2>21</val2>
+  </notype>
+  <notype name="named" attrnamed="5" attr4="4">
+    <val1>11</val1>
+    <val2>21</val2>
+    <med name="namedsub">
+      <val1>11</val1>
+    </med>
+  </notype>
+  <type attr1="1" attr2="2" attr3="3" attr4="4" attr5="5" attr6="6" />
+  <notype attr1="1" attr2="2" attr3="3" attr4="4" attr5="5" attr6="6" />
+</content>
