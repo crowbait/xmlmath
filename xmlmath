@@ -1,47 +1,7 @@
 #!/bin/bash
 set -e
 
-print_help () {
-  echo "XMLMath v1.0.0"
-  echo "c Crowbait | Licensed under GPLv3"
-  echo ""
-  echo "Usage: $0 <target-mode> <operation-mode> [<modifier>] [options] <targets...>"
-  echo ""
-  echo "Target Modes:"
-  echo "  attr        Modify XML attributes:     <tag attr=\"2\" />"
-  echo "  value       Modify XML element values: <tag>2</tag>"
-  echo ""
-  echo "Operation Modes:"
-  echo "  add       | a     Add modifier"
-  echo "  subtract  | s     Subtract modifier"
-  echo "  multiply  | m     Multiply by modifier"
-  echo "  divide    | d     Divide by modifier"
-  echo ""
-  echo "Options:"
-  echo "  --file <file>  | -f <file>  Input file (optional, stdin if not specified, stdout is file path)"
-  echo "  --inplace      | -p         Modify the file in place (requires --file, stdout if not specified)"
-  echo "  --int          | -i         Round results to nearest integer"
-  echo "  --min <val>                 Clamp values to this minimum"
-  echo "  --max <val>                 Clamp values to this maximum"
-  echo "  --regex        | -r         Treat targets names (value elements or attributes) as regex patterns - use single quotes!"
-  echo "  --within <tag> | -w <tag>   Only affect targets within this enclosing tag (regex; use single quotes!)"
-  echo "                                attr:  matches only attributes on this specific tag: <thismatches attr=..."
-  echo "                                value: matches only values if *this* is a descendant of tag: <thismatches>[...]<val>2</val>..."
-  echo "    --within-additional <regex> | --wa <regex>"
-  echo "                                This is an addon to -w and specifies that the opening tag line must match an additional regex."
-  echo "                                -w 'type' --wr 'attr.=\"1\"' will match all \"type\" tags that also have some attribute called \"attr\" set to 1."
-  echo "  --verbose      | -v         Print detailed information about what's being done"
-  echo "  --progress                  Print progress updates (default false, can't be used with -v)"
-  echo "  help                        Show this help message"
-  echo ""
-  echo "Examples:"
-  echo "  $0 value add 1.5 --file zones.xml --within zone radius"
-  echo "  $0 attr multiply 2 --file zones.xml smin smax dmin dmax"
-  echo "  $0 attr divide 3 --file zones.xml --int --min 1 --max 10 count"
-  echo "  $0 attr multiply 1.1 --file zones.xml --regex -w zoneA '.*min'"
-  echo "  $0 attr format --file zones.xml"
-  echo "  cat zones.xml | $0 value subtract 2 depth"
-}
+source "ext_help"
 
 # Print help if no arguments are passed
 if [[ $# -eq 0 ]]; then
@@ -177,51 +137,9 @@ TMP_XML=$(mktemp)
 xmllint --format "$INPUT_STREAM" > "$TMP_XML"
 INPUT_STREAM="$TMP_XML"
 
-# Math operation
-apply_math() {
-  local value="$1"
-  local modifier="$2"
-  local result
+source "ext_operation"
 
-  case "$OP_MODE" in
-    add|a)
-      result=$(awk "BEGIN { print $value + $modifier }")
-      ;;
-    subtract|s)
-      result=$(awk "BEGIN { print $value - $modifier }")
-      ;;
-    multiply|m)
-      result=$(awk "BEGIN { print $value * $modifier }")
-      ;;
-    divide|d)
-      result=$(awk "BEGIN { print $value / $modifier }")
-      ;;
-  esac
-
-  # Clamp
-  if [[ -n "$MIN_VALUE" ]]; then
-    result=$(awk -v r="$result" -v min="$MIN_VALUE" 'BEGIN { print (r < min) ? min : r }')
-  fi
-
-  if [[ -n "$MAX_VALUE" ]]; then
-    result=$(awk -v r="$result" -v max="$MAX_VALUE" 'BEGIN { print (r > max) ? max : r }')
-  fi
-
-  # Round
-  if [[ "$INTEGER_MODE" == "true" ]]; then
-    result_old=result
-    result=$(awk "BEGIN { printf \"%.0f\", $result }")
-  else
-    result=$(awk "BEGIN { printf \"%.8f\", $result }")  # Limit to 8 decimal places for safety
-    # Strip trailing zeros and the decimal point if there's no fractional part
-    result=$(echo "$result" | sed -E 's/(\.[0-9]*[1-9])0+$|\.[0-9]*$/\1/')
-  fi
-
-  echo "$result"
-}
-
-# Main processing loop
-
+# Prepare stats
 TOTAL_LINES=$(wc -l < "$TMP_XML")
 TOTAL_TARGETS="${#TARGETS[@]}"
 TOTAL_ITERATIONS=$(awk "BEGIN { print $TOTAL_LINES * $TOTAL_TARGETS }")
@@ -284,7 +202,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
           fi
 
           if [[ "$match" == "true" ]]; then
-            new_val=$(apply_math "$val" "$MODIFIER")
+            new_val=$(apply_operation "$val" "$MODIFIER")
             orig_line=$(echo "$orig_line" | sed -E "s/($key=\")$val\"/\1$new_val\"/")
             [[ "$VERBOSE" == "true" ]] && echo "[$LINE_NUM]   Target '$target'   replaced attribute '$key' value '$val' → '$new_val'" >&2
           fi
@@ -292,7 +210,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         new_line="$orig_line"
       elif [[ "$TARGET_MODE" == "value" && "$line" =~ \<$target\>([^<]+)\</$target\> ]]; then
         old_val="${BASH_REMATCH[1]}"
-        new_val=$(apply_math "$old_val" "$MODIFIER")
+        new_val=$(apply_operation "$old_val" "$MODIFIER")
         new_line=$(echo "$new_line" | sed -E "s|(<$target>)$old_val(</$target>)|\1$new_val\2|")
         [[ "$VERBOSE" == "true" ]] && echo "[$LINE_NUM]   Value modified: <$target>$old_val</$target> → <$target>$new_val</$target>" >&2
       fi

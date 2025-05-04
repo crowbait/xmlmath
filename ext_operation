@@ -1,0 +1,48 @@
+apply_operation() {
+  # from main script
+  local operation="$OP_MODE"
+  local min="$MIN_VALUE"
+  local max="$MAX_VALUE"
+  local int="$INTEGER_MODE"
+
+  # passed as parameters
+  local value="$1"
+  local modifier="$2"
+  local result
+
+  case "$operation" in
+    add|a)
+      result=$(awk "BEGIN { print $value + $modifier }")
+      ;;
+    subtract|s)
+      result=$(awk "BEGIN { print $value - $modifier }")
+      ;;
+    multiply|m)
+      result=$(awk "BEGIN { print $value * $modifier }")
+      ;;
+    divide|d)
+      result=$(awk "BEGIN { print $value / $modifier }")
+      ;;
+  esac
+
+  # Clamp
+  if [[ -n "$min" ]]; then
+    result=$(awk -v r="$result" -v min="$min" 'BEGIN { print (r < min) ? min : r }')
+  fi
+
+  if [[ -n "$max" ]]; then
+    result=$(awk -v r="$result" -v max="$max" 'BEGIN { print (r > max) ? max : r }')
+  fi
+
+  # Round
+  if [[ "$int" == "true" ]]; then
+    result_old=result
+    result=$(awk "BEGIN { printf \"%.0f\", $result }")
+  else
+    result=$(awk "BEGIN { printf \"%.8f\", $result }")  # Limit to 8 decimal places for safety
+    # Strip trailing zeros and the decimal point if there's no fractional part
+    result=$(echo "$result" | sed -E 's/(\.[0-9]*[1-9])0+$|\.[0-9]*$/\1/')
+  fi
+
+  echo "$result"
+}
