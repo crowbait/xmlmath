@@ -15,6 +15,7 @@ declare -A tests=(
   [op_subtract]="value subtract 5 -f $TESTFILE val2"
   [op_multiply]="value multiply 2 -f $TESTFILE val2"
   [op_divide]="value divide 5 -f $TESTFILE val2"
+  [op_set]="value set 500 -f $TESTFILE val2"
   [flag_int_down]="value add 5.2 --int -f $TESTFILE singleval"
   [flag_int_up]="value add 5.6 --int -f $TESTFILE singleval"
   [flag_min]="value subtract 9 --min 5 -f $TESTFILE singleval"

@@ -23,6 +23,9 @@ apply_operation() {
     divide|d)
       result=$(awk "BEGIN { print $value / $modifier }")
       ;;
+    set|s)
+      result="$modifier"
+      ;;
   esac
 
   # Clamp
