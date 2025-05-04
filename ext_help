@@ -13,7 +13,7 @@ print_help () {
   echo "  subtract  | s     Subtract modifier"
   echo "  multiply  | m     Multiply by modifier"
   echo "  divide    | d     Divide by modifier"
-  echo "  set       | s     Set to specified value"
+  echo "  set               Set to specified value"
   echo ""
   echo "Options:"
   echo "  --file <file>  | -f <file>  Input file (optional, stdin if not specified, stdout is file path)"

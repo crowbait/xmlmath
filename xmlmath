@@ -97,7 +97,7 @@ if [[ "$OP_MODE" != "add" && "$OP_MODE" != "a" &&
       "$OP_MODE" != "subtract" && "$OP_MODE" != "s" &&
       "$OP_MODE" != "multiply" && "$OP_MODE" != "m" &&
       "$OP_MODE" != "divide" && "$OP_MODE" != "d" &&
-      "$OP_MODE" != "set" && "$OP_MODE" != "s" ]]; then
+      "$OP_MODE" != "set" ]]; then
   print_help
   echo ""
   echo "❌ Invalid operation mode: $OP_MODE"

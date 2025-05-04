@@ -23,7 +23,7 @@ apply_operation() {
     divide|d)
       result=$(awk "BEGIN { print $value / $modifier }")
       ;;
-    set|s)
+    set)
       result="$modifier"
       ;;
   esac
