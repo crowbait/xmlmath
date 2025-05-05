@@ -4,8 +4,10 @@ set -e
 source "ext_help"
 
 # Print help if no arguments are passed
-if [[ $# -eq 0 ]]; then
+if [[ $# -lt 4 ]]; then
   print_help
+  echo ""
+  echo "❌ Not enough arguments"
   exit 0
 fi
 
@@ -85,41 +87,7 @@ done
 
 TARGETS=("$@")
 
-# Validate modes
-if [[ "$TARGET_MODE" != "attr" && "$TARGET_MODE" != "value" ]]; then
-  print_help
-  echo ""
-  echo "❌ Invalid target mode: $TARGET_MODE"
-  exit 1
-fi
-
-if [[ "$OP_MODE" != "add" && "$OP_MODE" != "a" &&
-      "$OP_MODE" != "subtract" && "$OP_MODE" != "s" &&
-      "$OP_MODE" != "multiply" && "$OP_MODE" != "m" &&
-      "$OP_MODE" != "divide" && "$OP_MODE" != "d" &&
-      "$OP_MODE" != "set" ]]; then
-  print_help
-  echo ""
-  echo "❌ Invalid operation mode: $OP_MODE"
-  exit 1
-fi
-
-if [[ "$OP_MODE" != "format" && "$OP_MODE" != "f" && ! "$MODIFIER" =~ ^-?[0-9]+(\.[0-9]+)?$ ]]; then
-  print_help
-  echo ""
-  echo "❌ Invalid modifier: $MODIFIER"
-  exit 1
-fi
-
-# Check if --inplace; requires --file
-if [[ "$INPLACE" == "true" && -z "$FILE" ]]; then
-  print_help
-  echo ""
-  echo "❌ --inplace requires --file"
-  exit 1
-fi
-
-# END sanity checks
+source "ext_checks"
 
 # Setup input
 if [[ -n "$FILE" ]]; then

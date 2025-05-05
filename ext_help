@@ -2,7 +2,7 @@ print_help () {
   echo "XMLMath v1.0.0"
   echo "c Crowbait | Licensed under GPLv3"
   echo ""
-  echo "Usage: $0 <target-mode> <operation-mode> [<modifier>] [options] <targets...>"
+  echo "Usage: $0 <target-mode> <operation-mode> <modifier> [options] <targets...>"
   echo ""
   echo "Target Modes:"
   echo "  attr        Modify XML attributes:     <tag attr=\"2\" />"

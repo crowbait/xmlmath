@@ -1,0 +1,36 @@
+possible_operations=(
+  "add" "a"
+  "subtract" "s"
+  "multiply" "m"
+  "divide" "d"
+  "set"
+)
+
+if [[ "$TARGET_MODE" != "attr" && "$TARGET_MODE" != "value" ]]; then
+  print_help
+  echo ""
+  echo "❌ Invalid target mode: $TARGET_MODE"
+  exit 1
+fi
+
+if [[ ! ${possible_operations[@]} =~ $OP_MODE ]]; then
+  print_help
+  echo ""
+  echo "❌ Invalid operation mode: $OP_MODE"
+  exit 1
+fi
+
+if [[ ! "$MODIFIER" =~ ^-?[0-9]+(\.[0-9]+)?$ ]]; then
+  print_help
+  echo ""
+  echo "❌ Invalid modifier: $MODIFIER"
+  exit 1
+fi
+
+# Check if --inplace; requires --file
+if [[ "$INPLACE" == "true" && -z "$FILE" ]]; then
+  print_help
+  echo ""
+  echo "❌ --inplace requires --file"
+  exit 1
+fi
