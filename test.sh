@@ -16,6 +16,8 @@ declare -A tests=(
   [op_multiply]="value multiply 2 -f $TESTFILE val2"
   [op_divide]="value divide 5 -f $TESTFILE val2"
   [op_set]="value set 500 -f $TESTFILE val2"
+  [op_expression_attr]="attr expression 2*x+3 -f $TESTFILE attrnamed"
+  [op_expression_value]="value expression (sqrt(x-1)+cos(0))^2 -f $TESTFILE singleval"
   [flag_int_down]="value add 5.2 --int -f $TESTFILE singleval"
   [flag_int_up]="value add 5.6 --int -f $TESTFILE singleval"
   [flag_min]="value subtract 9 --min 5 -f $TESTFILE singleval"
@@ -50,6 +52,7 @@ for T in "${!tests[@]}"; do
     ((RUN_TESTS_SUCCESS+=1))
     echo "✅ $T"
   else
+    ALL_OKAY="false"
     ((RUN_TESTS_ERROR+=1))
     echo "❌ $T: Mismatch"
     # add verbose flag to run and dump
@@ -62,10 +65,9 @@ for T in "${!tests[@]}"; do
 done
 
 echo ""
-if [[ "$ALL_OKAY" == "true" ]]; then
-  echo "✅ $(tput bold)Tests:   $(printf "%4s\n" $RUN_TESTS)$(tput sgr0)"
-else
-  echo "❌ $(tput bold)Tests:   $(printf "%4s\n" $RUN_TESTS)$(tput sgr0)"
-fi
+[[ "$ALL_OKAY" == "true" ]] && echo "✅ $(tput bold)Tests:   $(printf "%4s\n" $RUN_TESTS)$(tput sgr0)"
+[[ "$ALL_OKAY" == "false" ]] && echo "❌ $(tput bold)Tests:   $(printf "%4s\n" $RUN_TESTS)$(tput sgr0)"
 echo "   Success: $(printf "%4s\n" $RUN_TESTS_SUCCESS)"
 echo "   Failed:  $(printf "%4s\n" $RUN_TESTS_ERROR)"
+
+[[ "$ALL_OKAY" == "false" ]] && exit 1

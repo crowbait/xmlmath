@@ -26,6 +26,9 @@ apply_operation() {
     set)
       result="$modifier"
       ;;
+    expression|e)
+      result=$(awk -v x="$value" "BEGIN { print $modifier }")
+      ;;
   esac
 
   # Clamp
