@@ -114,9 +114,9 @@ TOTAL_ITERATIONS=$(awk "BEGIN { print $TOTAL_LINES * $TOTAL_TARGETS }")
 if [[ "$VERBOSE" == "true" ]]; then
   for target in "${TARGETS[@]}"; do
     echo "Target specified: ${target}"
-    echo "$TOTAL_LINES total lines" >&2
-    echo "$TOTAL_TARGETS total targets" >&2
-    echo "$TOTAL_ITERATIONS total iterations" >&2
+    echo "$TOTAL_LINES total lines"
+    echo "$TOTAL_TARGETS total targets"
+    echo "$TOTAL_ITERATIONS total iterations"
   done
 fi
 
@@ -127,7 +127,7 @@ ITERATION=0
 WITHIN_ACTIVE=false
 while IFS= read -r line || [[ -n "$line" ]]; do
   ((LINE_NUM+=1))
-  [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM $target\r"
+  [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM $target\r" >&2
 
   new_line="$line"
   indent=$(echo "$line" | grep -o '^[[:space:]]*')
@@ -172,7 +172,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
           if [[ "$match" == "true" ]]; then
             new_val=$(apply_operation "$val" "$MODIFIER")
             orig_line=$(echo "$orig_line" | sed -E "s/($key=\")$val\"/\1$new_val\"/")
-            [[ "$VERBOSE" == "true" ]] && echo "[$LINE_NUM]   Target '$target'   replaced attribute '$key' value '$val' → '$new_val'" >&2
+            [[ "$VERBOSE" == "true" ]] && echo "[$LINE_NUM]   Target '$target'   replaced attribute '$key' value '$val' → '$new_val'"
           fi
         done < <(echo "$line" | grep -oE '[a-zA-Z0-9_.:-]+="[^"]*"')
         new_line="$orig_line"
@@ -180,7 +180,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         old_val="${BASH_REMATCH[1]}"
         new_val=$(apply_operation "$old_val" "$MODIFIER")
         new_line=$(echo "$new_line" | sed -E "s|(<$target>)$old_val(</$target>)|\1$new_val\2|")
-        [[ "$VERBOSE" == "true" ]] && echo "[$LINE_NUM]   Value modified: <$target>$old_val</$target> → <$target>$new_val</$target>" >&2
+        [[ "$VERBOSE" == "true" ]] && echo "[$LINE_NUM]   Value modified: <$target>$old_val</$target> → <$target>$new_val</$target>"
       fi
     done
   else
@@ -198,12 +198,12 @@ done < "$INPUT_STREAM"
 if [[ "$INPLACE" == "true" ]]; then
   echo "$FILE"
   if [[ "$VERBOSE" == "true" ]]; then
-    echo "Updated '$FILE' in place (backup: $FILE.bak)" >&2
+    echo "Updated '$FILE' in place (backup: $FILE.bak)"
   fi
 else
   cat "$TMP_FILE"
   if [[ "$VERBOSE" == "true" ]]; then
-    echo "Output written to stdout" >&2
+    echo "Output written to stdout"
   fi
 fi
 
