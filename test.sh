@@ -1,7 +1,11 @@
 #!/bin/bash
 
 DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT=$( [[ -n "$1" ]] && echo "$1" || echo "$DIR/xmlmath" )
 TESTFILE="$DIR/test/test.xml"
+
+echo "$(tput bold)Running tests on$(tput sgr0) $SCRIPT $(tput bold)using$(tput sgr0) $TESTFILE"
+echo ""
 
 # declare all tests
 # format: [parameters for xmlmath]
@@ -44,7 +48,7 @@ rm -f $DIR/testout_*
 for T in "${!tests[@]}"; do
   ((RUN_TESTS+=1))
   read -r -a ARGS <<< "${tests[$T]}"
-  output=$("$DIR/xmlmath" "${ARGS[@]}")
+  output=$("$SCRIPT" "${ARGS[@]}")
   output_formatted=$(echo "$output" | xmllint --format -)
   expect=$(cat "$DIR/test/$T.xml" | xmllint --format -)
   
@@ -70,4 +74,6 @@ echo ""
 echo "   Success: $(printf "%4s\n" $RUN_TESTS_SUCCESS)"
 echo "   Failed:  $(printf "%4s\n" $RUN_TESTS_ERROR)"
 
-[[ "$ALL_OKAY" == "false" ]] && exit 1
+if [[ "$ALL_OKAY" == "false" ]]; then
+  exit 1 
+fi

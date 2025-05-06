@@ -1,0 +1,64 @@
+name: Release on Tag
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Needed for full commit history for release notes
+
+      - name: Install xmllint
+        run: sudo apt update && sudo apt install -y libxml2-utils
+
+      - name: Run pre-build test
+        run: bash ./test.sh
+        
+      - name: Get version from tag
+        id: get_tag
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+      - name: Update ext_help with version
+        run: |
+          sed -i "s/^echo \"XMLMath .*\"/echo \"XMLMath ${TAG}\"/" ext_help
+        env:
+          TAG: ${{ steps.get_tag.outputs.tag }}
+
+      - name: Run build
+        run: bash ./build.sh
+
+      - name: Create empty changelog
+        run: touch CHANGELOG.md
+
+      - name: Generate changelog from commits
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v5
+        with:
+          tag-prefix: ''
+          skip-version-file: true
+          skip-commit: true
+          output-file: CHANGELOG.md
+  
+      - name: Commit CHANGELOG.md
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "chore: update CHANGELOG for ${{ steps.get_tag.outputs.tag }}"
+          git push
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          name: ${{ steps.get_tag.outputs.tag }}
+          body_path: CHANGELOG.md
+          files: build/xmlmath
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 source "ext_help"
 
@@ -224,12 +223,10 @@ fi
 
 if [[ "$DIFF" == "true" ]]; then
   source "ext_diff"
-  diffresult=$( \
-    print_diff \
-      "$TMP_IN" "$TMP_OUT" \
+  diffresult=$( print_diff \
+    "$TMP_IN" "$TMP_OUT" \
       "$( [[ -n "$DIFF_FILE" ]] && echo "false" || echo "true" )" \
-      "$DIFF_LINE_LENGTH" \
-  )
+      "$DIFF_LINE_LENGTH" )
   if [[ -n "$DIFF_FILE" ]]; then
     echo "$diffresult" >"$DIFF_FILE"
   else
