@@ -9,6 +9,11 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Run tests
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install xmllint
+        run: sudo apt update && sudo apt install -y libxml2-utils
+
+      - name: Run test
         run: ./test.sh
