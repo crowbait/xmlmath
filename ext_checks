@@ -37,3 +37,13 @@ if [[ "$INPLACE" == "true" && -z "$FILE" ]]; then
   echo "❌ --inplace requires --file"
   exit 1
 fi
+
+# Check if --df/--dl; requires --diff
+if [[ ( -n "$DIFF_LINE_LENGTH" && "$DIFF" == "false" ) ||
+      ( -n "$DIFF_FILE" && "$DIFF" == "false" ) ]]; then
+  print_help
+  echo ""
+  echo "❌ --diff-line-length requires --diff"
+  echo "❌ --diff-file requires --diff"
+  exit 1
+fi

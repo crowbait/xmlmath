@@ -1,0 +1,74 @@
+# Usage: ./pretty_diff.sh [--len N] file1 file2
+
+# Use diff -u and parse the output
+# Usage: print_diff file1 file2 <color:true|false> [maxlength]
+print_diff() {
+  local file1="$1"
+  local file2="$2"
+  local COLOR="$3"
+  local LEN="$4"
+
+  if [[ "$COLOR" == "true" ]]; then
+    # Color constants
+    RED='\033[0;31m'
+    GREEN='\033[1;32m'
+    YELLOW='\033[0;33m'
+    CYAN='\033[1;36m'
+    NC='\033[0m' # No Color
+  fi
+
+  # Determine max line number length for padding
+  max_line=$(wc -l < "$file1")
+  max_line2=$(wc -l < "$file2")
+  [[ $max_line2 -gt $max_line ]] && max_line=$max_line2
+  pad_width=${#max_line}
+
+  diff -u --label "$file1" --label "$file2" "$file1" "$file2" | \
+  awk -v len="$LEN" -v pw="$pad_width" \
+      -v red="$RED" -v green="$GREEN" -v yellow="$YELLOW" -v cyan="$CYAN" -v nc="$NC" '
+  function truncate(s) {
+    return (len && length(s) > len) ? substr(s, 1, len) "..." : s
+  }
+  function pad(n) {
+    return sprintf("%*d", pw, n)
+  }
+  BEGIN {
+    old_line = 0
+    new_line = 0
+  }
+  /^--- / || /^\+\+\+ / {
+    next
+  }
+  /^@@/ {
+    match($0, /@@ -([0-9]+)(,[0-9]+)? \+([0-9]+)(,[0-9]+)? @@/, m)
+    old_line = m[1]
+    new_line = m[3]
+    next
+  }
+  /^-/ {
+    deleted = substr($0, 2)
+    getline lookahead
+    if (substr(lookahead, 1, 1) == "+") {
+      added = substr(lookahead, 2)
+      print yellow "M " pad(old_line) ":" nc " " truncate(deleted)
+      print cyan   "→ " pad(new_line) ":" nc " " truncate(added)
+      old_line++
+      new_line++
+    } else {
+      print red "D " pad(old_line) ":" nc " " truncate(deleted)
+      old_line++
+      NR--  # rewind
+    }
+    next
+  }
+  /^\+/ {
+    print green "A " pad(new_line) ":" nc " " truncate(substr($0, 2))
+    new_line++
+    next
+  }
+  /^ / {
+    old_line++
+    new_line++
+  }
+  '
+}

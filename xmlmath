@@ -22,6 +22,9 @@ WITHIN_TAG=""
 WITHIN_TAG_ADDITIONAL=""
 VERBOSE="false"
 PROGRESS="false"
+DIFF="false"
+DIFF_LINE_LENGTH=""
+DIFF_FILE=""
 
 # --- Parse positional args ---
 TARGET_MODE="$1"
@@ -38,11 +41,11 @@ while [[ "$1" == --* || "$1" == -* ]]; do
       ;;
     --inplace|-p)
       INPLACE="true"
-      shift
+      shift 1
       ;;
     --int|-i)
       INTEGER_MODE="true"
-      shift
+      shift 1
       ;;
     --min)
       MIN_VALUE="$2"
@@ -54,7 +57,7 @@ while [[ "$1" == --* || "$1" == -* ]]; do
       ;;
     --regex|-r)
       REGEX_MODE="true"
-      shift
+      shift 1
       ;;
     --within|-w)
       WITHIN_TAG="$2"
@@ -66,11 +69,23 @@ while [[ "$1" == --* || "$1" == -* ]]; do
       ;;
     --verbose|-v)
       VERBOSE="true"
-      shift
+      shift 1
       ;;
     --progress)
       PROGRESS="true"
       shift 1
+      ;;
+    --diff|-d)
+      DIFF="true"
+      shift 1
+      ;;
+    --diff-line-length|--dl)
+      DIFF_LINE_LENGTH="$2"
+      shift 2
+      ;;
+    --diff-file|--df)
+      DIFF_FILE="$2"
+      shift 2
       ;;
     help)
       print_help
@@ -101,14 +116,14 @@ else
   INPUT_STREAM="/dev/stdin"
 fi
 # Format before processing to protect fragile regex and line-based processing
-TMP_XML=$(mktemp)
-xmllint --format "$INPUT_STREAM" > "$TMP_XML"
-INPUT_STREAM="$TMP_XML"
+TMP_IN=$(mktemp)
+xmllint --format "$INPUT_STREAM" > "$TMP_IN"
+INPUT_STREAM="$TMP_IN"
 
 source "ext_operation"
 
 # Prepare stats
-TOTAL_LINES=$(wc -l < "$TMP_XML")
+TOTAL_LINES=$(wc -l < "$TMP_IN")
 TOTAL_TARGETS="${#TARGETS[@]}"
 TOTAL_ITERATIONS=$(awk "BEGIN { print $TOTAL_LINES * $TOTAL_TARGETS }")
 if [[ "$VERBOSE" == "true" ]]; then
@@ -120,7 +135,7 @@ if [[ "$VERBOSE" == "true" ]]; then
   done
 fi
 
-TMP_FILE="$(mktemp)"
+TMP_OUT="$(mktemp)"
 
 LINE_NUM=0
 ITERATION=0
@@ -191,21 +206,37 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     WITHIN_ACTIVE=false
   fi
 
-  printf "%s\n" "$new_line" >> "$TMP_FILE"
+  printf "%s\n" "$new_line" >> "$TMP_OUT"
 done < "$INPUT_STREAM"
 
 # Output result
 if [[ "$INPLACE" == "true" ]]; then
-  echo "$FILE"
+  cp -f "$TMP_OUT" "$FILE"
   if [[ "$VERBOSE" == "true" ]]; then
     echo "Updated '$FILE' in place (backup: $FILE.bak)"
   fi
 else
-  cat "$TMP_FILE"
+  cat "$TMP_OUT"
   if [[ "$VERBOSE" == "true" ]]; then
     echo "Output written to stdout"
   fi
 fi
 
-rm "$TMP_FILE"
-rm "$TMP_XML"
+if [[ "$DIFF" == "true" ]]; then
+  source "ext_diff"
+  diffresult=$( \
+    print_diff \
+      "$TMP_IN" "$TMP_OUT" \
+      "$( [[ -n "$DIFF_FILE" ]] && echo "false" || echo "true" )" \
+      "$DIFF_LINE_LENGTH" \
+  )
+  if [[ -n "$DIFF_FILE" ]]; then
+    echo "$diffresult" >"$DIFF_FILE"
+  else
+    echo ""
+    echo "$diffresult"
+  fi
+fi
+
+rm "$TMP_IN"
+rm "$TMP_OUT"
