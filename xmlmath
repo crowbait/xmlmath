@@ -144,6 +144,7 @@ TMP_OUT="$(mktemp)"
 LINE_NUM=0
 ITERATION=0
 WITHIN_ACTIVE=false
+WITHIN_NESTING_COUNT=0
 while IFS= read -r line || [[ -n "$line" ]]; do
   ((LINE_NUM+=1))
   [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM $target\r" >&2
@@ -160,9 +161,11 @@ while IFS= read -r line || [[ -n "$line" ]]; do
     elif [[ "$TARGET_MODE" == "value" ]]; then
       if [[ "$line" =~ \<$WITHIN_TAG && ( -z "$WITHIN_TAG_ADDITIONAL" || "$line" =~ $WITHIN_TAG_ADDITIONAL )  ]]; then
         WITHIN_ACTIVE=true
+        ((WITHIN_NESTING_COUNT+=1))
       fi
       if [[ "$line" =~ \<\/$WITHIN_TAG\> ]]; then
-        WITHIN_ACTIVE=false
+        ((WITHIN_NESTING_COUNT-=1))
+        [[ "$WITHIN_NESTING_COUNT" == "0" ]] && WITHIN_ACTIVE=false
       fi
     fi
   else

@@ -11,6 +11,9 @@
     <med>
       <val1>11</val1>
     </med>
+    <notype>
+      <val3>30</val3>
+    </notype>
     <val2>21</val2>
   </notype>
   <notype name="named" attrnamed="5" attr4="4">

@@ -32,6 +32,7 @@ declare -A tests=(
   [within_val]="value multiply 10 --within type -f $TESTFILE val1"
   [within_nested_parent]="value multiply 10 --within notype -f $TESTFILE val1"
   [within_nested_child]="value multiply 10 --within med -f $TESTFILE val1"
+  [within_nested_sametag]="value multiply 10 --within notype -f $TESTFILE val2"
   [within_additional_attr]="attr multiply 10 --within notype --wa name=\"named\" -f $TESTFILE --regex attr[0-9]"
   [within_additional_val]="value multiply 10 --within notype --wa named -f $TESTFILE val1"
   [within_additional_nested_child]="value multiply 10 --within med --wa namedsub -f $TESTFILE val1"
