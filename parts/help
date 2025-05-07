@@ -39,7 +39,7 @@ print_help () {
   echo "                                This is an addon to -d. It doesn't print the diff to stdout but writes it to a file instead."
   echo "  --verbose      | -v         Print detailed information about what's being done"
   echo "  --progress                  Print progress updates (default false, can't be used with -v)"
-  echo "                                This prints to stderr to prevent tainting the output."
+  echo "                                This prints to stderr to avoid tainting the output."
   echo "  help                        Show this help message"
   echo ""
   echo "Examples:"

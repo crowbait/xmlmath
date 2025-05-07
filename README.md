@@ -1,15 +1,9 @@
 # XMLMath <!-- omit in toc -->
 
-<div style="text-align: center;">
-  <a href="https://github.com/crowbait/xmlmath/releases/latest">
-    <img src="https://img.shields.io/github/v/release/crowbait/xmlmath" alt="Latest Release">
-  </a>
-  <a href="https://github.com/crowbait/xmlmath/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/crowbait/xmlmath" alt="License">
-  </a>
-  <a href="https://github.com/crowbait/xmlmath/actions/workflows/test.yml">
-    <img src="https://github.com/crowbait/xmlmath/actions/workflows/test.yml/badge.svg" alt="Tests">
-  </a>
+<div align="center">
+  <a href="https://github.com/crowbait/xmlmath/releases/latest"><img src="https://img.shields.io/github/v/release/crowbait/xmlmath" alt="Latest Release"></a>
+  <a href="https://github.com/crowbait/xmlmath/blob/main/LICENSE"><img src="https://img.shields.io/github/license/crowbait/xmlmath" alt="License"></a>
+  <a href="https://github.com/crowbait/xmlmath/actions/workflows/test.yml"><img src="https://github.com/crowbait/xmlmath/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
 </div>
 
 **XMLMath** is a command-line tool for performing arithmetic operations directly on XML files.
@@ -19,13 +13,13 @@ It allows batch modifications of attributes and values using a flexible set of f
 - Run arbitrary (*awk*-compatible) mathematic operations on attribute or element values
 - Target elements or attributes via tag names, or additional regex
 - Clamp and/or round results
-- Modify files in-place or output changes to stdout
+- Modify files in-place or output changes to a file or stdout
 - Optionally diff changes to stdout or a file
 - Small [dependency footprint](#requirements)
 
 #### What this is not
 - Fast. It really isn't.
-- Suitable for non-math operations. You'll be better of with regex-based find-replace in any text editor.
+- Suitable for non-math operations. You'll be better off with regex-based find-replace in any text editor.
 
 ## Contents <!-- omit in toc -->
 - [Getting Started](#getting-started)
@@ -48,7 +42,7 @@ sudo apt install libxml2-utils
 ```
 
 ### Download
-Download the latest built version of **XMLMath** from the latest release.
+Download the built version of **XMLMath** from the latest release.
 You could put it somewhere that's in your PATH to make it available globally.
 ```bash
 curl -L -o xmlmath https://github.com/crowbait/xmlmath/releases/latest/download/xmlmath
@@ -105,7 +99,7 @@ The index names of those commands correspond to files in `test/`, which contain 
 | **--max**                                  |           | Number  | Clamps all operation results to a maximum value of *Number*.                                                                                           |
 | **--regex**                                | -r        |         | Treats all targets (the list of attribute or value identifiers) as regex patterns instead of exact matches. You should quote each entry; see examples. |
 | **--within**                               | -w        | Tag     | For *attr*: only matches attributes within the tag *Tag*.<br>For *val*: only matches values that are a child element of *Tag* - within any depth.      |
-| *requires `-w`*<br>**--within-additional** | --wa      | Regex   | Only accepts a match on `--within`, if that line (containing the tag) also satisfies *Regex*.                                                          |
+| *requires `-w`*<br>**--within-additional** | --wa      | Regex   | Only accepts a match on `--within` if that line (containing the tag) also satisfies *Regex*.                                                          |
 | **--diff**                                 | -d        |         | Displays changes after all operations have finished.                                                                                                   |
 | *requires `-d`*<br>**--diff-line-length**  | --dl      | Number  | Limits the length of lines in `--diff`'s output to *Number*, truncating as needed.                                                                     |
 | *requires `-d`*<br>**--diff-file**         | --df      | Path    | Writes diff to a file instead of stdout.                                                                                                               |
