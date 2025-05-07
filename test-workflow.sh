@@ -1,11 +1,12 @@
 #!/bin/bash
 
-set -o xtrace # print commands
+echo "test.yml: act -e workflow-test-event.json -W .github/workflows/test.yml"
+act -e workflow-test-event.json -W .github/workflows/test.yml
 
-act -e workflow-test-event.json
+echo "release-on-tag.yml: act -e workflow-test-event.json -W .github/workflows/release-on-tag.yml"
+act -e workflow-test-event.json -W .github/workflows/release-on-tag.yml
+
 docker stop $(docker ps -a -q)
-
-set +o xtrace
 
 echo ""
 echo "Remember to delete the created release!"
