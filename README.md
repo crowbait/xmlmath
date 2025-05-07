@@ -84,13 +84,15 @@ You can get more examples from the tests: `test.sh` list commands.
 The index names of those commands correspond to files in `test/`, which contain the transformed output when running these commands on `test/_expectation-template.xml`.
 
 ### Operations
-The following operations are available:
-- `add` or `a`: add the modifier to the found values
-- `subtract` or `s`: subtract the modifier from the found values
-- `multiply` or `m`: multiply the found values with the modifier
-- `divide` or `d`: divide the found values by the modifier
-- `set`: set the value to the modifier
-- `expression` or `e` treats the modifier as an expression. It must be *awk*-compatible syntax and should be (single-)quoted.
+| **Operation**  | **Short** | **Description**                                                                                    |
+| -------------- | --------- | -------------------------------------------------------------------------------------------------- |
+| **add**        | a         | Add the modifier to the found values                                                               |
+| **subtract**   | s         | Subtract the modifier from the found values                                                        |
+| **multiply**   | m         | Multiply the found values with the modifier                                                        |
+| **divide**     | d         | Divide the found values by the modifier                                                            |
+| **set**        |           | Set the found values *to* the modifier                                                             |
+| **expression** | e         | Treat the modifier as an expression; must be *awk*-compatible syntax and should be (single-)quoted |
+
 
 ### Options
 | **Option**                                 | **Short** | **Arg** | **Description**                                                                                                                                        |
