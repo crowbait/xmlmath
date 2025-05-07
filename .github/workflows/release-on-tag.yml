@@ -40,10 +40,10 @@ jobs:
         id: changelog
         uses: TriPSs/conventional-changelog-action@v5
         with:
-          tag-prefix: ''
           skip-version-file: true
           skip-commit: true
           output-file: CHANGELOG.md
+          skip-bump: true
   
       - name: Commit CHANGELOG.md
         run: |
