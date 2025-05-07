@@ -56,8 +56,7 @@ chmod +x xmlmath
 ```
 You can also run it directly; this ensures you're always working with the latest release and doesn't put the script file on your drive.
 ```bash
-curl -sL https://github.com/crowbait/xmlmath/releases/latest/download/xmlmath | /
-bash -s -- "parameter1" "parameter2" "..."
+curl -sL https://github.com/crowbait/xmlmath/releases/latest/download/xmlmath | bash -s -- "parameter1" "parameter2" "..."
 ```
 You'll need to supply all parameters in quotes.
 
