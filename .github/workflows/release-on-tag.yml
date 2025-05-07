@@ -24,6 +24,7 @@ jobs:
       - name: Get version from tag
         id: get_tag
         run: echo "tag=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
       - name: Update ext_help with version
         run: |
           sed -i "s/^\s*echo \"XMLMath .*\"/  echo \"XMLMath ${TAG}\"/" parts/help
@@ -38,12 +39,21 @@ jobs:
 
       - name: Generate changelog from commits
         id: changelog
-        uses: TriPSs/conventional-changelog-action@v5
+        uses: requarks/changelog-action@v1.10.2
         with:
-          skip-version-file: true
-          skip-commit: true
-          output-file: CHANGELOG.md
-          skip-bump: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ github.ref_name }}
+          excludeTypes: build,docs,other,style,ci,chore
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_tag.outputs.tag }}
+          name: ${{ steps.get_tag.outputs.tag }}
+          body_path: ${{ steps.changelog.outputs.changes }}
+          files: build/xmlmath
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   
       - name: Commit CHANGELOG.md
         run: |
@@ -52,13 +62,3 @@ jobs:
           git add CHANGELOG.md
           git commit -m "chore: update CHANGELOG for ${{ steps.get_tag.outputs.tag }}"
           git push
-
-      - name: Create release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.get_tag.outputs.tag }}
-          name: ${{ steps.get_tag.outputs.tag }}
-          body_path: CHANGELOG.md
-          files: build/xmlmath
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
