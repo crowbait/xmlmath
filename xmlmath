@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source "ext_help"
+source "parts/help"
 
 # Print help if no arguments are passed
 if [[ $# -lt 4 ]]; then
@@ -101,7 +101,7 @@ done
 
 TARGETS=("$@")
 
-source "ext_checks"
+source "parts/checks"
 
 # Setup input
 if [[ -n "$FILE" ]]; then
@@ -119,7 +119,7 @@ TMP_IN=$(mktemp)
 xmllint --format "$INPUT_STREAM" > "$TMP_IN"
 INPUT_STREAM="$TMP_IN"
 
-source "ext_operation"
+source "parts/operation"
 
 # Prepare stats
 TOTAL_LINES=$(wc -l < "$TMP_IN")
@@ -222,7 +222,7 @@ else
 fi
 
 if [[ "$DIFF" == "true" ]]; then
-  source "ext_diff"
+  source "parts/diff"
   diffresult=$( print_diff \
     "$TMP_IN" "$TMP_OUT" \
       "$( [[ -n "$DIFF_FILE" ]] && echo "false" || echo "true" )" \

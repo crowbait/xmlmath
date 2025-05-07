@@ -3,10 +3,10 @@
 DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 replacement_targets=(
-  "ext_checks"
-  "ext_diff"
-  "ext_help"
-  "ext_operation"
+  "checks"
+  "diff"
+  "help"
+  "operation"
 )
 
 mkdir -p "$DIR/build"
@@ -16,14 +16,14 @@ tmpfile="$DIR/build/tmp"
 cp "$sourcefile" "$outfile"
 
 for target in "${replacement_targets[@]}"; do
-  echo "Replacing source \"$target\"..."
+  echo "Replacing source \"parts/$target\"..."
 
-  if [[ ! -f "$target" ]]; then
+  if [[ ! -f "parts/$target" ]]; then
     echo "❌ File '$target' not found! Aborting."
     exit 1
   fi
 
-  awk -v pattern="^[[:space:]]*source[[:space:]]+\\\"${target}\\\"" -v repl_file="$target" '
+  awk -v pattern="^[[:space:]]*source[[:space:]]+\\\"parts/${target}\\\"" -v repl_file="parts/$target" '
     $0 ~ pattern {
       while ((getline line < repl_file) > 0)
         print line

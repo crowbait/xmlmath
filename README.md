@@ -111,7 +111,7 @@ The following operations are available:
 | **--progress**                             |           |         | Prints progress information. Prints to stderr, so the stdout *should* not be affected. **Cannot be used with `-v`.**                                   |
 
 ## Development
-The main script is modularized and `source`s its modules, which are named `ext_*`.
+The main script is modularized and `source`s its modules, which are in `parts/*`.
 This is done for maintainability and is mostly personal preference.
 It can be run directly in its development form or can be "compiled" by injecting the external modules into the script.
 This is done by `build.sh` and writes a complete, self-contained file to `build/xmlmath`.
