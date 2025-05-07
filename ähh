@@ -1,0 +1,26 @@
+<?xml version="101"?>
+<content>
+  <singletarget singleattr="101">
+    <singleval>10</singleval>
+  </singletarget>
+  <type attr1="101" attr2="102">
+    <val1>10</val1>
+    <val2>20</val2>
+  </type>
+  <notype attr1="101" attr2="102">
+    <val1>10</val1>
+    <med>
+      <val1>10</val1>
+    </med>
+    <val2>20</val2>
+  </notype>
+  <notype name="100" attrnamed="105" attr4="104">
+    <val1>10</val1>
+    <val2>20</val2>
+    <med name="100">
+      <val1>10</val1>
+    </med>
+  </notype>
+  <type attr1="101" attr2="102" attr3="103" attr4="104" attr5="105" attr6="106"/>
+  <notype attr1="101" attr2="102" attr3="103" attr4="104" attr5="105" attr6="106"/>
+</content>

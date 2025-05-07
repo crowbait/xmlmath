@@ -38,6 +38,14 @@ if [[ "$INPLACE" == "true" && -z "$FILE" ]]; then
   exit 1
 fi
 
+# Check if --out; can't be used with --inplace
+if [[ -n "$OUTFILE" && "$INPLACE" == "true" ]]; then
+  print_help
+  echo ""
+  echo "❌ --out can't be used with --inplace"
+  exit 1
+fi
+
 # Check if --df/--dl; requires --diff
 if [[ ( -n "$DIFF_LINE_LENGTH" && "$DIFF" == "false" ) ||
       ( -n "$DIFF_FILE" && "$DIFF" == "false" ) ]]; then

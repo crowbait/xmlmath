@@ -21,6 +21,7 @@ print_help () {
   echo "Options:"
   echo "  --file <file>  | -f <file>  Input file (optional, stdin if not specified, stdout is file path)"
   echo "  --inplace      | -p         Modify the file in place (requires --file, stdout if not specified)"
+  echo "  --out <file>   | -o <file>  Write output to specified file; can't be used with --inplace"
   echo "  --int          | -i         Round results to nearest integer"
   echo "  --min <val>                 Clamp values to this minimum"
   echo "  --max <val>                 Clamp values to this maximum"
