@@ -155,13 +155,18 @@ while IFS= read -r line || [[ -n "$line" ]]; do
   # Track within state for --within
   if [[ -n "$WITHIN_TAG" ]]; then
     if [[ "$TARGET_MODE" == "attr" ]]; then
-      if [[ "$line" =~ \<$WITHIN_TAG && ( -z "$WITHIN_TAG_ADDITIONAL" || "$line" =~ $WITHIN_TAG_ADDITIONAL ) ]]; then
-        WITHIN_ACTIVE=true
+      if [[ "$line" =~ \<$WITHIN_TAG([^>]*)\> ]]; then
+        attrs="${BASH_REMATCH[1]}"
+        if [[ -z "$WITHIN_TAG_ADDITIONAL" || "$attrs" =~ $WITHIN_TAG_ADDITIONAL ]]; then
+          WITHIN_ACTIVE=true
+        fi
       fi
     elif [[ "$TARGET_MODE" == "value" ]]; then
-      if [[ "$line" =~ \<$WITHIN_TAG && ( -z "$WITHIN_TAG_ADDITIONAL" || "$line" =~ $WITHIN_TAG_ADDITIONAL )  ]]; then
-        WITHIN_ACTIVE=true
+      if [[ "$line" =~ \<$WITHIN_TAG([^a-zA-Z0-9_:]|$) ]]; then
         ((WITHIN_NESTING_COUNT+=1))
+        if [[ -z "$WITHIN_TAG_ADDITIONAL" || "$line" =~ $WITHIN_TAG_ADDITIONAL ]]; then
+          WITHIN_ACTIVE=true
+        fi
       fi
       if [[ "$line" =~ \<\/$WITHIN_TAG\> ]]; then
         ((WITHIN_NESTING_COUNT-=1))
