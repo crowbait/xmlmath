@@ -130,6 +130,10 @@ source "parts/operation"
 TOTAL_LINES=$(wc -l < "$TMP_IN")
 TOTAL_TARGETS="${#TARGETS[@]}"
 TOTAL_ITERATIONS=$(awk "BEGIN { print $TOTAL_LINES * $TOTAL_TARGETS }")
+if [[ "$TOTAL_TARGETS" == 0 ]]; then
+  echo "No targets given."
+  exit 0
+fi
 if [[ "$VERBOSE" == "true" ]]; then
   for target in "${TARGETS[@]}"; do
     echo "Target specified: ${target}"
