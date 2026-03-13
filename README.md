@@ -24,7 +24,10 @@ It allows batch modifications of attributes and values using a flexible set of f
 ## Contents <!-- omit in toc -->
 - [Getting Started](#getting-started)
   - [Requirements](#requirements)
-  - [Download](#download)
+  - [Installation](#installation)
+    - [Dependencies](#dependencies)
+    - [Ubuntu](#ubuntu)
+    - [Other Distros](#other-distros)
 - [Usage](#usage)
   - [Examples](#examples)
   - [Operations](#operations)
@@ -41,37 +44,55 @@ On *Debian*-/*Ubuntu*-based distros, *xmllint* can be installed with:
 sudo apt install libxml2-utils
 ```
 
-### Download
+### Installation
+#### Dependencies
+
+- `xmllint` (on Ubuntu: part of libxml2-utils, on most other distros part of some variation of "libxml2")
+- `awk`
+- For installation one-liner:
+  - `curl`
+  - `jq`
+
+#### Ubuntu
+
+This one-liner installs dependencies, gets the latest release, downloads the script, makes it executable, and places it into `/usr/local/bin/`, making it accessible from *PATH*:
+
+```sh
+sudo apt install -y libxml2-utils curl jq && curl -fsSL "$(curl -fsSL https://api.github.com/repos/crowbait/xmlmath/releases/latest | jq -r '.assets[] | select(.name=="xmlmath") | .browser_download_url')" | sudo tee /usr/local/bin/xmlmath >/dev/null && sudo chmod +x /usr/local/bin/xmlmath
+```
+
+#### Other Distros
+
 Download the built version of **XMLMath** from the latest release.
 You could put it somewhere that's in your PATH to make it available globally.
-```bash
+```sh
 curl -L -o xmlmath https://github.com/crowbait/xmlmath/releases/latest/download/xmlmath
 chmod +x xmlmath
 ```
 You can also run it directly; this ensures you're always working with the latest release and doesn't put the script file on your drive.
-```bash
+```sh
 curl -sL https://github.com/crowbait/xmlmath/releases/latest/download/xmlmath | bash -s -- "parameter1" "parameter2" "..."
 ```
 You'll need to supply all parameters in quotes.
 
 ## Usage
 Syntax:
-```bash
+```sh
 ./xmlmath <attr|value> <operation> <modifier> [options] <...targets>
 ```
 
 ### Examples
 This multiplies the value (between tags) of all XML elements named "someval" *or* "otherval" in `input.xml` by 2, writing the results back to the same file:
-```bash
+```sh
 ./xmlmath value multiply 2 --file input.xml --inplace someval otherval
 ```
 This multiplies the value all attributes in the file `in.xml` with names matching the regex `.*someattr` AND which are attributes of a tag "tagname" by 1.1, rounding the results to the neares integer and ensuring they are always greater than or equal to 2:
-```bash
+```sh
 ./xmlmath attr multiply 1.1 --int --min 2 --file in.xml --regex -w tagname '.*someattr'
 ```
 You can run arbitrary operations on the found values, providing they can be expressed in *awk*-compatible syntax - in this case, all attribute values (see regex) will be replaced with their root added to their squared value.
 **The token `x` will be substituted for the found value**:
-```bash
+```sh
 ./xmlmath attr expression 'sqrt(x)+x*x' --file in.xml -r '.*'
 ```
 You can get more examples from the tests: `test.sh` list commands.
