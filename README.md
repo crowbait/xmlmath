@@ -23,9 +23,8 @@ It allows batch modifications of attributes and values using a flexible set of f
 
 ## Contents <!-- omit in toc -->
 - [Getting Started](#getting-started)
-  - [Requirements](#requirements)
+  - [Dependencies](#dependencies)
   - [Installation](#installation)
-    - [Dependencies](#dependencies)
     - [Ubuntu](#ubuntu)
     - [Other Distros](#other-distros)
 - [Usage](#usage)
@@ -36,29 +35,23 @@ It allows batch modifications of attributes and values using a flexible set of f
 
 
 ## Getting Started
-### Requirements
-**XMLMath** relies on *awk*, *sed*, *diff* and *xmllint*.
-With the exception of *xmllint*, these are already included in many distributions.
-On *Debian*-/*Ubuntu*-based distros, *xmllint* can be installed with:
-```bash
-sudo apt install libxml2-utils
-```
-
-### Installation
-#### Dependencies
-
+### Dependencies
 - `xmllint` (on Ubuntu: part of libxml2-utils, on most other distros part of some variation of "libxml2")
 - `awk`
+- `sed`
+- `diff`
 - For installation one-liner:
   - `curl`
   - `jq`
 
+### Installation
 #### Ubuntu
 
-This one-liner installs dependencies, gets the latest release, downloads the script, makes it executable, and places it into `/usr/local/bin/`, making it accessible from *PATH*:
+This one-liner installs dependencies, gets the latest release, downloads the script, makes it executable, and places it into `/usr/local/bin/`, making it accessible from PATH.
+You can also use this command to update your local copy.
 
 ```sh
-sudo apt install -y libxml2-utils curl jq && curl -fsSL "$(curl -fsSL https://api.github.com/repos/crowbait/xmlmath/releases/latest | jq -r '.assets[] | select(.name=="xmlmath") | .browser_download_url')" | sudo tee /usr/local/bin/xmlmath >/dev/null && sudo chmod +x /usr/local/bin/xmlmath
+sudo apt install -y libxml2-utils sed curl jq && curl -fsSL "$(curl -fsSL https://api.github.com/repos/crowbait/xmlmath/releases/latest | jq -r '.assets[] | select(.name=="xmlmath") | .browser_download_url')" | sudo tee /usr/local/bin/xmlmath >/dev/null && sudo chmod +x /usr/local/bin/xmlmath
 ```
 
 #### Other Distros
