@@ -134,13 +134,13 @@ if [[ "$TOTAL_TARGETS" == 0 ]]; then
   echo "No targets given."
   exit 0
 fi
-if [[ "$VERBOSE" == "true" ]]; then
+if [[ "$VERBOSE" == "true" || "$INPLACE" == "true" || -n "$OUTFILE" ]]; then
   for target in "${TARGETS[@]}"; do
     echo "Target specified: ${target}"
-    echo "$TOTAL_LINES total lines"
-    echo "$TOTAL_TARGETS total targets"
-    echo "$TOTAL_ITERATIONS total iterations"
   done
+  echo "$TOTAL_LINES total lines"
+  echo "$TOTAL_TARGETS total targets"
+  echo "$TOTAL_ITERATIONS total iterations"
 fi
 
 TMP_OUT="$(mktemp)"
@@ -151,8 +151,7 @@ WITHIN_ACTIVE=false
 WITHIN_NESTING_COUNT=0
 while IFS= read -r line || [[ -n "$line" ]]; do
   ((LINE_NUM+=1))
-  [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM $target\r" >&2
-
+  
   new_line="$line"
   indent=$(echo "$line" | grep -o '^[[:space:]]*')
 
@@ -184,6 +183,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
   if [[ "$WITHIN_ACTIVE" == "true" ]]; then
     for target in "${TARGETS[@]}"; do
       ((ITERATION+=1))
+      [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM / $TOTAL_LINES $target\r" >&2
       pattern="$target"
       [[ "$REGEX_MODE" == "false" ]] && pattern="^$target$"
 
@@ -215,11 +215,13 @@ while IFS= read -r line || [[ -n "$line" ]]; do
       fi
     done
   else
+    # not within active block (specified by --within), add targets-array length to counter (skipped all targets)
     ((ITERATION+="${#TARGETS[@]}"))
   fi
 
   if [[ "$TARGET_MODE" == "attr" && "$WITHIN_ACTIVE" == "true" && "$line" =~ \> ]]; then
     WITHIN_ACTIVE=false
+    [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM / $TOTAL_LINES\r" >&2
   fi
 
   printf "%s\n" "$new_line" >> "$TMP_OUT"
