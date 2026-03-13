@@ -183,7 +183,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
   if [[ "$WITHIN_ACTIVE" == "true" ]]; then
     for target in "${TARGETS[@]}"; do
       ((ITERATION+=1))
-      [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM / $TOTAL_LINES $target\r" >&2
+      [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM / $TOTAL_LINES $target\033[K\r" >&2
       pattern="$target"
       [[ "$REGEX_MODE" == "false" ]] && pattern="^$target$"
 
@@ -217,11 +217,11 @@ while IFS= read -r line || [[ -n "$line" ]]; do
   else
     # not within active block (specified by --within), add targets-array length to counter (skipped all targets)
     ((ITERATION+="${#TARGETS[@]}"))
+    [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM / $TOTAL_LINES\033[K\r" >&2
   fi
 
   if [[ "$TARGET_MODE" == "attr" && "$WITHIN_ACTIVE" == "true" && "$line" =~ \> ]]; then
     WITHIN_ACTIVE=false
-    [[ "$PROGRESS" == "true" && "$VERBOSE" == "false" ]] && echo -ne ">> $(awk "BEGIN { printf \"%.2f\", $ITERATION / $TOTAL_ITERATIONS * 100 }")% $ITERATION / ${TOTAL_ITERATIONS}: L#$LINE_NUM / $TOTAL_LINES\r" >&2
   fi
 
   printf "%s\n" "$new_line" >> "$TMP_OUT"
