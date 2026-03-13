@@ -114,7 +114,15 @@ if [[ -n "$FILE" ]]; then
     echo "❌ File not found: $FILE"
     exit 1
   fi
-  [[ "$INPLACE" == "true" ]] && cp "$FILE" "$FILE.bak"
+  if [[ "$INPLACE" == "true" ]]; then
+    bak="$FILE.bak"
+    i=1
+    while [[ -e "$bak" ]]; do
+      bak="$FILE.bak$i"
+      ((i++))
+    done
+    cp "$FILE" "$bak"
+  fi
   INPUT_STREAM="$FILE"
 else
   INPUT_STREAM="/dev/stdin"
