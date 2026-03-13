@@ -1,4 +1,9 @@
 
+## [v1.1.3] - 2026-03-13
+### :bug: Bug Fixes
+- [`407855a`](https://github.com/crowbait/xmlmath/commit/407855a3fdb04b2c9c474c6537bcd594c0a0f49a) - enhance verbosity checks and progress reporting *(commit by [@crowbait](https://github.com/crowbait))*
+
+
 ## [v1.1.2] - 2026-03-11
 ### :bug: Bug Fixes
 - [`6dcd80c`](https://github.com/crowbait/xmlmath/commit/6dcd80cee0453c317eb5a18f2b7436504ba74411) - missing target handling *(commit by [@crowbait](https://github.com/crowbait))*
@@ -19,3 +24,4 @@
 [v1.1.0]: https://github.com/crowbait/xmlmath/compare/v1.0.0...v1.1.0
 [v1.1.1]: https://github.com/crowbait/xmlmath/compare/v1.1.0...v1.1.1
 [v1.1.2]: https://github.com/crowbait/xmlmath/compare/v1.1.1...v1.1.2
+[v1.1.3]: https://github.com/crowbait/xmlmath/compare/v1.1.1...v1.1.3
